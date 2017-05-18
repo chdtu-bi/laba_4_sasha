@@ -14,8 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const number1 = $('#number1').val();
         const number2 = $('#number2').val();
 
-        $progressbar.css('width', '0%');
-
         $.ajax({
             xhr: progressTracker($progressbar),
             type: 'GET',
@@ -32,19 +30,21 @@ document.addEventListener('DOMContentLoaded', () => {
             error: (err) => {
                 $resultDiv.css('display', 'none');
                 $errorDiv.css('display', 'block');
+                $progressbar.css('width', '0%');
             }
         });
     });
 
     function progressTracker($progressbar) {
         return function () {
-            const xhr = new window.XMLHttpRequest();
-            xhr.addEventListener("progress", function(evt){
-                if (evt.lengthComputable) {
-                    var percentComplete = evt.loaded / evt.total;
-                    $progressbar.css('width', percentComplete * 100 + '%');
-                }
-            }, false);
+            $progressbar.css('width', '0%');
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function(){
+                const percentComplete = xhr.readyState / 4;
+                $progressbar.css('width', percentComplete * 100 + '%');
+            };
 
             return xhr;
         }
